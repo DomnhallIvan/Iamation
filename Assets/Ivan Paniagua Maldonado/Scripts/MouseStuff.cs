@@ -39,7 +39,7 @@ public class MouseStuff : MonoBehaviour
             atM.SetTile(location, tileJimmyM);
             _start = location;
 
-            if (Input.GetMouseButtonDown(1) && tM.GetSprite(location) != null)
+            if (Input.GetMouseButtonDown(0) && tM.GetSprite(location) != null)
             {
                 // Debug.Log(location + "Origen");
                 fF.startingPoint = location;

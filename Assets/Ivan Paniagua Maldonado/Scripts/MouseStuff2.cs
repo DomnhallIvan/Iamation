@@ -31,33 +31,57 @@ public class MouseStuff2 : MonoBehaviour
         location.z = 0;
 
 
-        if (Input.GetMouseButtonDown(0))
-        {
+       
+        
            // Debug.Log("Inicio Seleccionado " + "<color=#00ff00ff>" + _location + previousStart + "</color>");
 
             Collider2D collider = Physics2D.OverlapPoint(mousePos);
             if (collider != null && collider.CompareTag(collisionTag))
             {
                 //Debug.Log("Inicio Seleccionado " + "<color=#00ff00ff>" + _location + previousStart + "</color>");
-
-                if (_start != location)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log("Nueva ubicación");
-                    DjMz.startingPoint = location;
-                   atM.ClearAllTiles();
-                    atM.SetTile(location, tile1);
-                    Matrix4x4 matrix = Matrix4x4.TRS(offsetGrid, Quaternion.Euler(0f, 0f, 0f), Vector3.one);
-                    atM.SetTransformMatrix(location, matrix);
-                    DjMz.RestartDictionary();
-                    //Debug.Log(_dL.Movements);
-                    StartCoroutine(DjMz.DomainExpansion());
+                    if (_start != location && tM.GetSprite(location) != null)
+                    {
+                        atM.SetTile(_start, tileFill);
 
-                    startSet = true;
-                    _start = location;
+                        atM.SetTile(location, tileJimmyM);
+
+                        Debug.Log("Nueva ubicación");
+                        DjMz.startingPoint = location;
+                        atM.ClearAllTiles();
+                        atM.SetTile(location, tile1);
+                        Matrix4x4 matrix = Matrix4x4.TRS(offsetGrid, Quaternion.Euler(0f, 0f, 0f), Vector3.one);
+                        atM.SetTransformMatrix(location, matrix);
+                        DjMz.RestartDictionary();
+                        //Debug.Log(_dL.Movements);
+                        StartCoroutine(DjMz.DomainExpansion());
+
+                        startSet = true;
+                        _start = location;
+
+                    }
+
                 }
+
             }
+
+        if (tM.GetSprite(location) != null && startSet == true)
+        {
+            if (_end != location && tM.GetSprite(location) != null)
+            {
+                atM.SetTile(_end, tileFill);
+                //atM.ClearAllTiles();
+                //fF.SetTile(_end, tileFill);
+            }
+            Debug.Log(location);
+            atM.SetTile(location, tileFill);
+            _end = location;
+
         }
-        
+
+
+
         /*
         //Pongo el inicio cuando ya haya dado click
         if (tM.GetSprite(location) != null && startSet != true)
@@ -101,7 +125,7 @@ public class MouseStuff2 : MonoBehaviour
             _end = location;
 
         }*/
-        
+
 
         //POner otra cosa
         /*if(Input.GetButtonDown("Fire1") && startSet == true)

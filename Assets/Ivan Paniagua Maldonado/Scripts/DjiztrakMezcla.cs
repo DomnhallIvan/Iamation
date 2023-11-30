@@ -23,6 +23,7 @@ public class DjiztrakMezcla : MonoBehaviour
     private Vector3Int _previous;
     public Vector3Int startingPoint; //Este será asignado por el MouseStuff
 
+    private bool Expansiondone = false;
     [SerializeField] private Vector3 offsetGrid = new Vector3(0, -0.11f, 0);
     [SerializeField] private int Movements = 20;
     [SerializeField] private float delay;
@@ -30,13 +31,10 @@ public class DjiztrakMezcla : MonoBehaviour
     private void Update()
     {
         //if (Input.GetKeyDown(KeyCode.Space))
-        /*if (mouseStuff.startSet == true)
+        if (Expansiondone == true)
         {
-           
-            // DomainExpansion();
-            // Debug.Log("IMBOUTTOCUM");
-
-        }*/
+            DrawPath(mouseStuff._end);
+        }
 
     }
 
@@ -65,17 +63,18 @@ public class DjiztrakMezcla : MonoBehaviour
                     //if next not in _came_from:
                     if (_tM.HasTile(neighbors) && neighbors != null && _tM.GetSprite(neighbors) != null)
                     {
-                        if (!_cost_so_far.ContainsKey(neighbors) || new_cost < _cost_so_far[neighbors])
+                        if (!_cost_so_far.ContainsKey(neighbors) || new_cost < _cost_so_far[neighbors]&&neighbors!=null)
                         {
                             _cost_so_far[neighbors] = new_cost;
                             float priority = new_cost;
                             _frontier.Enqueue(neighbors, priority);
                             _came_from[neighbors] = current;
+                            Debug.Log("Added to _came_from: " + neighbors + " with predecessor: " + current);
                             _taM.SetTile(neighbors, _tileFill);
                             Matrix4x4 matrix = Matrix4x4.TRS(offsetGrid, Quaternion.Euler(0f, 0f, 0f), Vector3.one);
                             _taM.SetTransformMatrix(neighbors, matrix);
 
-                            yield return new WaitForSeconds(delay);
+                            //yield return new WaitForSeconds(delay);
                             // _taM.SetTile(neighbors, _tileFill);
 
                         }
@@ -87,7 +86,7 @@ public class DjiztrakMezcla : MonoBehaviour
 
             yield return null;
         }
-        DrawPath(mouseStuff._end);
+        Expansiondone = true;
 
     }
 
@@ -99,6 +98,22 @@ public class DjiztrakMezcla : MonoBehaviour
         _frontier.Clear();
         //reached.Clear();
         Movements = 20;
+    }
+
+
+    public void DrawPath(Vector3Int xd)
+    {
+        //Hago el caminito
+        _previous = _came_from[xd];
+        mouseStuff.atM.SetTile(xd, _tile1);
+        mouseStuff.atM.SetTile(startingPoint, _tile1);
+        mouseStuff.atM.SetTile(mouseStuff._end, _tile1);
+        while (_previous != mouseStuff._start)
+        {
+            mouseStuff.atM.SetTile(_previous, _tile1);
+            _previous = _came_from[_previous];
+        }
+        //mouseStuff.atM.ClearAllTiles();
     }
 
     List<Vector3Int> getNeighbours(Vector3Int current)
@@ -118,20 +133,6 @@ public class DjiztrakMezcla : MonoBehaviour
         return vecinos;
     }
 
-    public void DrawPath(Vector3Int xd)
-    {
-        //Hago el caminito
-        _previous = _came_from[xd];
-        mouseStuff.atM.SetTile(xd, _tileFill);
-        mouseStuff.atM.SetTile(startingPoint, _tile1);
-
-        while (_previous != mouseStuff._start)
-        {
-            mouseStuff.atM.SetTile(_previous, _tileFill);
-            _previous = _came_from[_previous];
-        }
-        //mouseStuff.atM.ClearAllTiles();
-    }
 
     private int Costos(Vector3Int neighbour)
     {
