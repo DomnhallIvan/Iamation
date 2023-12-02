@@ -25,16 +25,18 @@ public class DjiztrakMezcla : MonoBehaviour
 
     private bool Expansiondone = false;
     [SerializeField] private Vector3 offsetGrid = new Vector3(0, -0.11f, 0);
-    [SerializeField] private int Movements = 20;
-    [SerializeField] private float delay;
+    [SerializeField] private int _movements = 20;
+     public float delay;
 
     private void Update()
     {
         //if (Input.GetKeyDown(KeyCode.Space))
-        if (Expansiondone == true)
+        if (Expansiondone==true)
         {
             DrawPath(mouseStuff._end);
+          
         }
+       
 
     }
 
@@ -45,7 +47,7 @@ public class DjiztrakMezcla : MonoBehaviour
         _cost_so_far[startingPoint] = 0;
 
         //Funcion que devuelva lista de Vector3.int, a partir de current
-        while (Movements > 0)
+        while (_movements > 0)
         {
             Vector3Int current = _frontier.Dequeue();
 
@@ -63,7 +65,7 @@ public class DjiztrakMezcla : MonoBehaviour
                     //if next not in _came_from:
                     if (_tM.HasTile(neighbors) && neighbors != null && _tM.GetSprite(neighbors) != null)
                     {
-                        if (!_cost_so_far.ContainsKey(neighbors) || new_cost < _cost_so_far[neighbors]&&neighbors!=null)
+                        if (!_cost_so_far.ContainsKey(neighbors) || new_cost < _cost_so_far[neighbors] && neighbors != null)
                         {
                             _cost_so_far[neighbors] = new_cost;
                             float priority = new_cost;
@@ -74,7 +76,7 @@ public class DjiztrakMezcla : MonoBehaviour
                             Matrix4x4 matrix = Matrix4x4.TRS(offsetGrid, Quaternion.Euler(0f, 0f, 0f), Vector3.one);
                             _taM.SetTransformMatrix(neighbors, matrix);
 
-                            //yield return new WaitForSeconds(delay);
+                            yield return new WaitForSeconds(delay);
                             // _taM.SetTile(neighbors, _tileFill);
 
                         }
@@ -82,7 +84,7 @@ public class DjiztrakMezcla : MonoBehaviour
 
                 }
             }
-            Movements -= 1;
+            _movements -= 1;
 
             yield return null;
         }
@@ -97,10 +99,10 @@ public class DjiztrakMezcla : MonoBehaviour
         _cost_so_far = new Dictionary<Vector3Int, float>();
         _frontier.Clear();
         //reached.Clear();
-        Movements = 20;
+        _movements = 20;
     }
 
-
+    //Hace el caminito
     public void DrawPath(Vector3Int xd)
     {
         //Hago el caminito
@@ -112,10 +114,14 @@ public class DjiztrakMezcla : MonoBehaviour
         {
             mouseStuff.atM.SetTile(_previous, _tile1);
             _previous = _came_from[_previous];
+            //Aqui la idea es que el DrawPath y el fondo siempre se pinten, para evitar que DrawPath borre las tiles del DomainExpansion
+            mouseStuff.StartExpansionLoop();
         }
+      
         //mouseStuff.atM.ClearAllTiles();
     }
 
+    //Ambos tenemos lo mismo en esta parte
     List<Vector3Int> getNeighbours(Vector3Int current)
     {
         List<Vector3Int> vecinos = new List<Vector3Int>();

@@ -30,16 +30,15 @@ public class MouseStuff2 : MonoBehaviour
         var location = tM.WorldToCell(mousePos);
         location.z = 0;
 
+           
 
-       
-        
-           // Debug.Log("Inicio Seleccionado " + "<color=#00ff00ff>" + _location + previousStart + "</color>");
-
+        if (Input.GetMouseButtonDown(0))
+        {
             Collider2D collider = Physics2D.OverlapPoint(mousePos);
             if (collider != null && collider.CompareTag(collisionTag))
             {
                 //Debug.Log("Inicio Seleccionado " + "<color=#00ff00ff>" + _location + previousStart + "</color>");
-                if (Input.GetMouseButtonDown(0))
+
                 {
                     if (_start != location && tM.GetSprite(location) != null)
                     {
@@ -65,8 +64,9 @@ public class MouseStuff2 : MonoBehaviour
                 }
 
             }
-
-        if (tM.GetSprite(location) != null && startSet == true)
+        }
+            // Debug.Log("Inicio Seleccionado " + "<color=#00ff00ff>" + _location + previousStart + "</color>");            
+        if (atM.GetSprite(location) != null && startSet == true)
         {
             if (_end != location && tM.GetSprite(location) != null)
             {
@@ -74,65 +74,35 @@ public class MouseStuff2 : MonoBehaviour
                 //atM.ClearAllTiles();
                 //fF.SetTile(_end, tileFill);
             }
-            Debug.Log(location);
+            //Debug.Log(location);
             atM.SetTile(location, tileFill);
             _end = location;
 
         }
 
+    }
 
-
-        /*
-        //Pongo el inicio cuando ya haya dado click
-        if (tM.GetSprite(location) != null && startSet != true)
+    private IEnumerator StartDomainExpansion()
+    {
+        // Ensure DjMz is not null
+        if (DjMz == null)
         {
-            if (_start != location && tM.GetSprite(location) != null)
-            {
-                atM.SetTile(_start, tileFill);
-            }
-
-            atM.SetTile(location, tileJimmyM);
-            _start = location;
-
-
-            if (Input.GetMouseButtonDown(1) && tM.GetSprite(location) != null)
-            {
-                // Debug.Log(location + "Origen");
-                // fF.startingPoint = location;
-                //Dj.startingPoint = location;
-                //He.startingPoint = location;
-                DjMz.startingPoint = location;
-                // Dj.tileCord = location;
-
-                startSet = true;
-            }
+            Debug.LogError("DjMz is not assigned!");
+            yield break;
         }
 
-
-
-
-        //Pongo el final
-        if (tM.GetSprite(location) != null && startSet == true)
+        while (true)
         {
-            if (_end != location && tM.GetSprite(location) != null)
-            {
-                atM.SetTile(_end, tileFill);
-                atM.ClearAllTiles();
-                //fF.SetTile(_end, tileFill);
-            }
-            Debug.Log(location);
-            atM.SetTile(location, tile1);
-            _end = location;
+            DjMz.RestartDictionary();
+            yield return StartCoroutine(DjMz.DomainExpansion());
 
-        }*/
+            // Optional delay between expansions
+            yield return new WaitForSeconds(1f);
+        }
+    }
 
-
-        //POner otra cosa
-        /*if(Input.GetButtonDown("Fire1") && startSet == true)
-        {
-            startSet = false;
-            Debug.Log("Aña");
-        }*/
-
+    public void StartExpansionLoop()
+    {
+        StartCoroutine(StartDomainExpansion());
     }
 }

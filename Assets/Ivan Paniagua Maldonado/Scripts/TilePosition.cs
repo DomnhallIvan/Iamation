@@ -41,7 +41,7 @@ public class TilePosition : MonoBehaviour
                     tmArea.SetTransformMatrix(_location, matrix);
                     _dL.RestartDictionary();
                     //Debug.Log(_dL.Movements);
-                    StartCoroutine(_dL.DomainExpansion());
+                   //StartCoroutine(_dL.DomainExpansion());
 
                     previousStart = _location;
                 }
